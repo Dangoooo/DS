@@ -1,24 +1,10 @@
 #include <iostream>
 #include "dstring.h"
 #include "sort.h"
-#include "sharedpointer.h"
-#include "smartpointer.h"
+#include "gtree.h"
 using namespace DS;
 using namespace std;
 
-class Test
-{
-public:
-    int value;
-    Test(int i = 0): value(i)
-    {
-        cout<<"test"<<endl;
-    }
-    ~Test()
-    {
-        cout<<"~test"<<endl;
-    }
-};
 
 int main()
 {
@@ -29,12 +15,25 @@ int main()
     {
         cout<<a[i]<<endl;
     }*/
-    SharedPointer<Test> sp1 = new Test();
-    cout<<sp1.isNull()<<endl;
-    sp1->value = 5;
-    SharedPointer<Test> sp2(sp1);
-    cout<<sp2->value<<endl;
-    cout<<(sp1==sp2)<<endl;
+
+   GTreeNode<char>* tn = nullptr;
+   GTree<char> t;
+   t.insert('A', nullptr);
+   tn = t.find('A');
+
+   t.insert('B', tn);
+
+   tn = t.find('B');
+
+   cout<<tn->value<<endl;
+
+
+
+
+
+
+
+
 
 
     return 0;

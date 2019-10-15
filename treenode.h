@@ -14,6 +14,12 @@ public:
     }
     virtual ~TreeNode() = 0;
 };
+
+template <typename T>
+TreeNode<T>::~TreeNode()
+{
+
+}
 }
 
 

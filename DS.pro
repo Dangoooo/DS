@@ -35,4 +35,6 @@ HEADERS += \
     tree.h \
     treenode.h \
     pointer.h \
-    sharedpointer.h
+    sharedpointer.h \
+    gtree.h \
+    gtreenode.h

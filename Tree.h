@@ -21,7 +21,7 @@ public:
     virtual int degree() const = 0;
     virtual int count() const = 0;
     virtual int height() const = 0;
-    virtual ~Tree() = 0;
+    virtual void clear() = 0;
 };
 }
 
