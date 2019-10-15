@@ -206,17 +206,11 @@ public:
    template<typename T>
    static void Bead(T array[], int len)
    {
-       T max = getMax(array, len);    //获取待排序数组的最大值
+       T max = getMax(array, len);
        int bead[len*max] = {0};
-       /*for (int i = 0; i < len; i++)//挂珠子
-       {
-           for (int j = 0; j < array[i] ; j++)
-           {
-               bead[i*max + j] = 1;
-           }
-       }*/
 
-       for (int i = 0; i < len; i++)//挂珠子
+       //挂珠子
+       for (int i = 0; i < len; i++)
        {
            for (int j = 0; j < max&&array[i] > 0; j++)
            {
@@ -225,7 +219,8 @@ public:
            }
        }
 
-       for (int i = 1; i<len; i++)//珠子下坠
+       //珠子下坠
+       for (int i = 1; i<len; i++)
        {
            for (int j = 0; j<max; j++)
            {
@@ -238,7 +233,9 @@ public:
                }
            }
        }
-       for (int i = 0, k = len-1 ;i < len; i++, k--)//读取
+
+
+       for (int i = 0, k = len-1 ;i < len; i++, k--)
        {
            for (int j = 0; j < max&&bead[i*max + j] != 0; j++)
            {

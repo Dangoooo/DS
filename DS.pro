@@ -31,4 +31,8 @@ HEADERS += \
     staticqueue.h \
     linkqueue.h \
     dstring.h \
-    sort.h
+    sort.h \
+    tree.h \
+    treenode.h \
+    pointer.h \
+    sharedpointer.h
