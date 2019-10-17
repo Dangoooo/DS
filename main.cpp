@@ -8,7 +8,7 @@ using namespace std;
 
 int main()
 {
-   /*int a[] = {4,9,5,6,3,7,8,10};
+    /*int a[] = {4,9,5,6,3,7,8,10};
     Sort::Bead(a, 8);
 
     for(int i=0; i<8; i++)
@@ -26,6 +26,9 @@ int main()
    tn = t.find('B');
 
    cout<<tn->value<<endl;
+   cout<<t.count()<<endl;
+   cout<<t.height()<<endl;
+   cout<<t.degree()<<endl;
 
 
 

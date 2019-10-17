@@ -10,7 +10,7 @@ protected:
     bool m_flag;
     void* operator new(unsigned long long size)
     {
-        Object::operator new(size);
+        return Object::operator new(size);
     }
 public:
     LinkList<GTreeNode<T>*> child;

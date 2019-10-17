@@ -2,6 +2,7 @@
 #define SORT_H
 #include "object.h"
 #include "array.h"
+#define BEAD(i, j) bead[i*max+j]
 namespace DS
 {
 class Sort : public Object
@@ -204,48 +205,6 @@ public:
    }
 
    template<typename T>
-   static void Bead(T array[], int len)
-   {
-       T max = getMax(array, len);
-       int bead[len*max] = {0};
-
-       //挂珠子
-       for (int i = 0; i < len; i++)
-       {
-           for (int j = 0; j < max&&array[i] > 0; j++)
-           {
-               bead[i*max + j] = 1;
-               array[i]--;
-           }
-       }
-
-       //珠子下坠
-       for (int i = 1; i<len; i++)
-       {
-           for (int j = 0; j<max; j++)
-           {
-               int temp = i;
-               while (temp>0 && (bead[temp*max + j] >bead[(temp - 1)*max + j]))
-               {
-                   bead[temp*max + j] = 0;
-                   bead[(temp - 1)*max + j] = 1;
-                   temp--;
-               }
-           }
-       }
-
-
-       for (int i = 0, k = len-1 ;i < len; i++, k--)
-       {
-           for (int j = 0; j < max&&bead[i*max + j] != 0; j++)
-           {
-               array[k]++;
-           }
-       }
-   }
-
-
-   template<typename T>
    static void Select(Array<T>& array, bool min2max = true)
    {
        Select(array.array(), array.length(), min2max);
@@ -277,11 +236,41 @@ public:
       Quick(array.array(), array.length(), min2max);
    }
 
+   template<typename T>
+   static void Bead(T array[], int len)
+   {
+       T max = getMax(array, len);                    // O(n)
+       unsigned char bead[max*len] = {0};
 
+       // 挂珠子
+       for (int i = 0; i < len; i++)                  // O(S)
+           for (int j = 0; j < array[i]; j++)
+               BEAD(i, j) = 1;
 
+       //模拟重力
+       for (int j = 0; j < max; j++)
+       {
+           // 计算每列有多少珠子
+           int sum = 0;
+           for (int i=0; i < len; i++)                // O(S)
+           {
+               sum += BEAD(i, j);
+               BEAD(i, j) = 0;
+           }
 
+           // 珠子下落
+           for (int i = len - sum; i < len; i++)     // O(S)
+               BEAD(i, j) = 1;
+       }
 
+       for (int i = 0; i < len; i++)                 // O(S)
+       {
+           int j;
+           for (j = 0; j < max && BEAD(i, j); j++);
 
+           array[i] = j;
+       }
+   }
 
 
 };

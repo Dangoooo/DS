@@ -63,6 +63,80 @@ protected:
         }
 
     }
+
+    void remove(GTreeNode<T>* node, GTree<T>*& ret)
+    {
+        ret = new GTree<T>();
+        if(ret != nullptr)
+        {
+            if(node == root())
+            {
+                this->m_root = nullptr;
+            }
+            else
+            {
+                LinkList<GTreeNode<T>*>& child = dynamic_cast<GTreeNode<T>*>(node->parent)->child;
+                child.remove(child.find(node));
+                node->parent = nullptr;
+            }
+            ret->m_root = node;
+        }
+        else
+        {
+           THROW_EXCEPTION(NoEnoughMemoryException, "No enough memory to create a treeNode...");
+        }
+    }
+
+    int count(GTreeNode<T>* node) const
+    {
+        int ret = 0;
+        if(node != nullptr)
+        {
+            ret = 1;
+            for(node->child.move(0); !node->child.end(); node->child.next())
+            {
+                ret += count(node->child.current());
+            }
+        }
+        return  ret;
+    }
+
+    int height(GTreeNode<T>* node) const
+    {
+        int ret = 0;
+        if(node != nullptr)
+        {
+            ret = 1;
+            for(node->child.move(0); !node->child.end(); node->child.next())
+            {
+                int h = height(node->child.current());
+                if(ret < h)
+                {
+                    ret = h;
+                }
+                ret += 1;
+            }
+        }
+        return ret;
+    }
+
+    int degree(GTreeNode<T>* node) const
+    {
+        int ret = 0;
+        if(node != nullptr)
+        {
+            ret = node->child.length();
+            for(node->child.move(0); !node->child.end(); node->child.next())
+            {
+                int d = degree(node->child.current());
+                if(ret < d)
+                {
+                    ret = d;
+                }
+            }
+        }
+        return ret;
+    }
 public:
     bool insert(TreeNode<T>* node)
     {
@@ -117,11 +191,32 @@ public:
     }
     SmartPointer<Tree<T>> remove(const T& value)
     {
-        return  nullptr;
+        GTree<T>* ret = nullptr;
+        GTreeNode<T>* node = find(value);
+        if(node != nullptr)
+        {
+            remove(node, ret);
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidParameterException, "cannot find a node via the value...");
+        }
+
+        return  ret;
     }
-    SmartPointer<Tree<T>> remove(TreeNode<T>* parent)
+    SmartPointer<Tree<T>> remove(TreeNode<T>* node)
     {
-        return  nullptr;
+        GTree<T>* ret = nullptr;
+        node = find(node);
+        if(node != nullptr)
+        {
+            remove(dynamic_cast<GTreeNode<T>*>(node), ret);
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidParameterException, "cannot find a node via the node...");
+        }
+        return  ret;
     }
     GTreeNode<T>* find(const T& value)
     {
@@ -131,21 +226,21 @@ public:
     {
         return  find(root(), dynamic_cast<GTreeNode<T>*>(node));
     }
-    GTreeNode<T>* root()
+    GTreeNode<T>* root() const
     {
         return dynamic_cast<GTreeNode<T>*>(this->m_root);
     }
     int degree() const
     {
-        return 0;
+        return degree(root());
     }
     int count() const
     {
-        return  0;
+        return count(root());
     }
     int height() const
     {
-        return 0;
+        return height(root());
     }
     void clear()
     {
