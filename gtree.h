@@ -3,11 +3,15 @@
 #include "Tree.h"
 #include "gtreenode.h"
 #include "exception.h"
+#include "linkqueue.h"
 namespace DS {
 template<typename T>
 class GTree: public Tree<T>
 {
 protected:
+    LinkQueue<GTreeNode<T>*> m_queue;
+    GTree(const GTree<T>&);
+    GTree<T>& operator=(const GTree<T>&);
     GTreeNode<T>* find(GTreeNode<T>* node, const T& value) const
     {
         GTreeNode<T>* ret = nullptr;
@@ -138,6 +142,10 @@ protected:
         return ret;
     }
 public:
+    GTree()
+    {
+
+    }
     bool insert(TreeNode<T>* node)
     {
         bool ret = true;
@@ -196,6 +204,7 @@ public:
         if(node != nullptr)
         {
             remove(node, ret);
+            m_queue.clear();
         }
         else
         {
@@ -211,6 +220,7 @@ public:
         if(node != nullptr)
         {
             remove(dynamic_cast<GTreeNode<T>*>(node), ret);
+            m_queue.clear();
         }
         else
         {
@@ -230,6 +240,46 @@ public:
     {
         return dynamic_cast<GTreeNode<T>*>(this->m_root);
     }
+    bool begin()
+    {
+        bool ret = (root() != nullptr);
+        if(ret)
+        {
+            m_queue.clear();
+            m_queue.add(root());
+        }
+        return ret;
+    }
+    bool end()
+    {
+        bool ret = (m_queue.length() == 0);
+        return ret;
+    }
+    bool next()
+    {
+        bool ret = (m_queue.length() > 0);
+        if(ret)
+        {
+            GTreeNode<T>* node = m_queue.front();
+            m_queue.remove();
+            for(node->child.move(0); !node->child.end(); node->child.next())
+            {
+                m_queue.add(node->child.current());
+            }
+        }
+        return ret;
+    }
+    T current()
+    {
+        if(!end())
+        {
+            return m_queue.front()->value;
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidOperationException, "cannot get the current value...");
+        }
+    }
     int degree() const
     {
         return degree(root());
@@ -244,6 +294,7 @@ public:
     }
     void clear()
     {
+        m_queue.clear();
         free(root());
         this->m_root = nullptr;
     }

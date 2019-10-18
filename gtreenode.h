@@ -8,6 +8,8 @@ class  GTreeNode: public TreeNode<T>
 {
 protected:
     bool m_flag;
+    GTreeNode(const GTreeNode<T>&);
+    GTreeNode<T>& operator=(const GTreeNode<T>&);
     void* operator new(unsigned long long size)
     {
         return Object::operator new(size);
