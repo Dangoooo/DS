@@ -2,6 +2,7 @@
 #include "dstring.h"
 #include "sort.h"
 #include "gtree.h"
+#include "btree.h"
 using namespace DS;
 using namespace std;
 
@@ -16,23 +17,21 @@ int main()
         cout<<a[i]<<endl;
     }*/
 
-   GTreeNode<char>* tn = nullptr;
-   GTree<char> t;
+   BTreeNode<char>* tn = nullptr;
+   BTree<char> t;
    t.insert('A', nullptr);
    tn = t.find('A');
-
+   cout<<tn->value<<endl;
    t.insert('B', tn);
 
    tn = t.find('B');
+   cout<<tn<<endl;
 
    cout<<tn->value<<endl;
    cout<<t.count()<<endl;
    cout<<t.height()<<endl;
    cout<<t.degree()<<endl;
-   for(t.begin(); !t.end(); t.next())
-   {
-       cout<<t.current()<<endl;
-   }
+
 
 
 

@@ -5,12 +5,25 @@ namespace DS {
 template <typename T>
 class TreeNode: public Object
 {
+protected:
+    bool m_flag;
+    TreeNode(const TreeNode<T>&);
+    TreeNode<T>& operator=(const TreeNode<T>&);
+    void* operator new(unsigned long long size)
+    {
+        return Object::operator new(size);
+    }
 public:
     T value;
     TreeNode* parent;
     TreeNode()
     {
+        m_flag = false;
         parent = nullptr;
+    }
+    bool flag()
+    {
+        return m_flag;
     }
     virtual ~TreeNode() = 0;
 };
