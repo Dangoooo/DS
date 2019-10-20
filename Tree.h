@@ -24,6 +24,10 @@ public:
     virtual int count() const = 0;
     virtual int height() const = 0;
     virtual void clear() = 0;
+    virtual void begin() = 0;
+    virtual void next() = 0;
+    virtual void end() = 0;
+    virtual void current() = 0;
 };
 }
 

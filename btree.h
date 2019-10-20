@@ -16,6 +16,7 @@ template<typename T>
 class BTree: public Tree<T>
 {
 protected:
+    LinkQueue<BTreeNode<T>*> m_queue;
     virtual BTreeNode<T>* find(BTreeNode<T>* node, T value) const
     {
         BTreeNode<T>* ret = nullptr;
@@ -108,6 +109,93 @@ protected:
         }
         return ret;
     }
+    virtual bool remove(BTreeNode<T>* node, BTree<T>* ret)
+    {
+        ret = new BTree<T>();
+        if(ret != nullptr)
+        {
+            if(node == root())
+            {
+                this->m_root = nullptr;
+            }
+            else
+            {
+                BTreeNode<T>* parent = dynamic_cast<BTreeNode<T>*>(node->parent);
+                if(parent->left == node)
+                {
+                    parent->left = nullptr;
+                }
+                else if(parent->right)
+                {
+                    parent->right = nullptr;
+                }
+                node->parent = nullptr;
+            }
+            ret->m_root = node;
+        }
+        else
+        {
+            THROW_EXCEPTION(NoEnoughMemoryException, "No enough memory to create a tree...");
+        }
+
+    }
+    virtual void free(BTreeNode<T>* node)
+    {
+        if(node != nullptr)
+        {
+           free(node->left);
+           free(node->right);
+           if(node->flag())
+           {
+               delete node;
+           }
+        }
+    }
+    int degree(BTreeNode<T>* node) const
+    {
+        int ret = 0;
+        if(node != nullptr)
+        {
+            ret = !!node->left + !!node->right;
+            if(ret < 2)
+            {
+                int d1 = degree(node->left);
+                if(ret < d1)
+                {
+                    ret = d1;
+                }
+            }
+            if(ret < 2)
+            {
+                int d2 = degree(node->right);
+                if(ret < d2)
+                {
+                    ret = d2;
+                }
+            }
+        }
+        return ret;
+    }
+    int count(BTreeNode<T>* node) const
+    {
+        return (node != nullptr) ? (count(node->left)+count(node->right)+1) : 0;
+    }
+    virtual int height(BTreeNode<T>* node) const
+    {
+        int ret = 0;
+        if(node != nullptr)
+        {
+            if(height(node->left)>height(node->right))
+            {
+                ret = height(node->left)+1;
+            }
+            else
+            {
+                ret = height(node->right)+1;
+            }
+        }
+        return ret;
+    }
 public:
     virtual bool insert(TreeNode<T>* node, BTreePos pos)
     {
@@ -164,15 +252,37 @@ public:
     }
     bool insert(const T& value, TreeNode<T>* parent)
     {
-       insert(value, parent, ANY);
+       return insert(value, parent, ANY);
     }
     SmartPointer<Tree<T>> remove(const T& value)
     {
-        return nullptr;
+        BTree<T>* ret;
+        BTreeNode<T>* node = find(value);
+        if(node != nullptr)
+        {
+            remove(node, ret);
+            m_queue.clear();
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidParameterException, "cannot find a node via value...");
+        }
+        return ret;
     }
     SmartPointer<Tree<T>> remove(TreeNode<T>* node)
     {
-        return nullptr;
+        BTree<T>* ret;
+        node = find(node);
+        if(node != nullptr)
+        {
+            remove(dynamic_cast<BTreeNode<T>*>(node), ret);
+            m_queue.clear();
+        }
+        else
+        {
+            THROW_EXCEPTION(InvalidParameterException, "Parameter node is invalid...");
+        }
+        return ret;
     }
     BTreeNode<T>* find(const T& value)
     {
@@ -188,19 +298,54 @@ public:
     }
     int degree() const
     {
-        return 0;
+        return degree(root());
     }
     int count() const
     {
-        return 0;
+        return count(root());
     }
     int height() const
     {
-        return 0;
+        return count(root());
+    }
+    bool begin()
+    {
+        bool ret = (root() != nullptr);
+        if(ret)
+        {
+            m_queue.clear();
+            m_queue.add(root());
+        }
+        return ret;
+    }
+    bool end()
+    {
+        bool ret = (m_queue.length() == 0);
+        return ret;
+    }
+    bool next()
+    {
+        bool ret = (m_queue.length() > 0);
+        if(ret)
+        {
+            BTreeNode<T>* node = m_queue.front();
+            m_queue.remove();
+            if(node->left != nullptr)
+            {
+                m_queue.add(node->left);
+            }
+            if(node->right != nullptr)
+            {
+                m_queue.add(node->right);
+            }
+        }
+        return ret;
     }
     void clear()
     {
-
+        free(root());
+        m_queue.clear();
+        this->m_root = nullptr;
     }
 };
 }
