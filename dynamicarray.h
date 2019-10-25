@@ -83,11 +83,23 @@ public:
                 delete [] temp;
             }
             else {
-                THROW_EXCEPTION(NoEnoughMemoryException, "No memory to resize object...")
+                THROW_EXCEPTION(NoEnoughMemoryException, "No memory to resize object...");
             }
 
 
         }
+    }
+    T getMax() const
+    {
+       T ret = this->m_array[0];
+       for(int i = 1; i < length(); i++)
+       {
+           if(this->m_array[i] > ret)
+           {
+               ret = this->m_array[i];
+           }
+       }
+       return ret;
     }
     ~DynamicArray()
     {
