@@ -18,7 +18,8 @@ enum BTTravelsal
 {
     PreOrder,
     InOrder,
-    PostOrder
+    PostOrder,
+    LevelOrder
 };
 
 template<typename T>
@@ -232,6 +233,28 @@ protected:
             queue.add(node);
         }
     }
+    void levelOrderTravelsal(BTreeNode<T>* node, LinkQueue<BTreeNode<T>*>& queue)
+    {
+        if(node != nullptr)
+        {
+            LinkQueue<BTreeNode<T>*> temp;
+            temp.add(node);
+            if(temp.length() > 0)
+            {
+                BTreeNode<T>* n = temp.front();
+                if(n->left)
+                {
+                    temp.add(n->left);
+                }
+                if(n->right)
+                {
+                    temp.add(n->right);
+                }
+                temp.remove();
+                queue.add(n);
+            }
+        }
+    }
     BTreeNode<T>* clone(BTreeNode<T>* node) const
     {
         BTreeNode<T>* ret = nullptr;
@@ -309,6 +332,47 @@ protected:
 
         }
         return ret;
+    }
+    void travelsal(BTTravelsal order, LinkQueue<BTreeNode<T>*>& queue)
+    {
+        switch (order)
+        {
+        case PreOrder:
+            preOrderTravelsal(root(), queue);
+            break;
+        case InOrder:
+            inOrderTravelsal(root(), queue);
+            break;
+        case PostOrder:
+            postOrderTravelsal(root(), queue);
+            break;
+        case LevelOrder:
+            levelOrderTravelsal(root(), queue);
+            break;
+        default:
+            THROW_EXCEPTION(InvalidParameterException, "Parameter order is invalid...");
+            break;
+        }
+    }
+    BTreeNode<T>* connect(LinkQueue<BTreeNode<T>*>& queue)
+    {
+        BTreeNode<T>* ret = nullptr;
+        if(queue.length() > 0)
+        {
+            ret = queue.front();
+            BTreeNode<T>* slider = queue.front();
+            slider->left = nullptr;
+            queue.remove();
+            while(queue.length() > 0)
+            {
+                slider->right = queue.front();
+                queue.front()->left = slider;
+                slider = queue.front();
+                queue.remove();
+            }
+            slider->right = nullptr;
+        }
+        return nullptr;
     }
 public:
     virtual bool insert(TreeNode<T>* node, BTreePos pos)
@@ -471,21 +535,7 @@ public:
     {
         DynamicArray<T>* ret = nullptr;
         LinkQueue<BTreeNode<T>*> queue;
-        switch (order)
-        {
-        case PreOrder:
-            preOrderTravelsal(root(), queue);
-            break;
-        case InOrder:
-            inOrderTravelsal(root(), queue);
-            break;
-        case PostOrder:
-            postOrderTravelsal(root(), queue);
-            break;
-        default:
-            THROW_EXCEPTION(InvalidParameterException, "Parameter order is invalid...");
-            break;
-        }
+        travelsal(order, queue);
         ret = new DynamicArray<T>(queue.length());
         if(ret != nullptr)
         {
@@ -532,6 +582,16 @@ public:
         {
             THROW_EXCEPTION(NoEnoughMemoryException, "No enough memory to create btree...");
         }
+        return ret;
+    }
+    BTreeNode<T>* thread(BTTravelsal order)
+    {
+        BTreeNode<T>* ret = nullptr;
+        LinkQueue<BTreeNode<T>*> queue;
+        travelsal(order, queue);
+        ret = connect(queue);
+        this->m_root = nullptr;
+        m_queue.clear();
         return ret;
     }
     void clear()
