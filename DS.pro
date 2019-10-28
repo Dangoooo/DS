@@ -39,4 +39,7 @@ HEADERS += \
     gtree.h \
     gtreenode.h \
     btreenode.h \
-    btree.h
+    btree.h \
+    graph.h \
+    matrixgraph.h \
+    listgraph.h
