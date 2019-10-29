@@ -237,7 +237,7 @@ public:
    }
 
    template<typename T>
-   static void Bead(T array[], int len)
+   static void Bead(T array[], int len)               //3O(S)====>O(S)
    {
        T max = getMax(array, len);                    // O(n)
        unsigned char bead[max*len] = {0};
@@ -259,11 +259,11 @@ public:
            }
 
            // 珠子下落
-           for (int i = len - sum; i < len; i++)     // O(S)
+           for (int i = len - sum; i < len; i++)      // O(S)
                BEAD(i, j) = 1;
        }
 
-       for (int i = 0; i < len; i++)                 // O(S)
+       for (int i = 0; i < len; i++)
        {
            int j;
            for (j = 0; j < max && BEAD(i, j); j++);

@@ -12,7 +12,7 @@ using namespace std;
 int main()
 {
 
-    /*int array[10000];
+    int array[10000];
     int a[10000];
     srand((unsigned)time(nullptr));
     clock_t start1,end1;
@@ -46,9 +46,9 @@ int main()
         cout<<a[i]<<" ";
     }
     cout<<endl;
-    cout<<"Quick Sort:"<<double(end2-start2)/CLOCKS_PER_SEC<<endl;*/
+    cout<<"Quick Sort:"<<double(end2-start2)/CLOCKS_PER_SEC<<endl;
 
-   BTreeNode<char>* tn = nullptr;
+   /*BTreeNode<char>* tn = nullptr;
    BTree<char> t;
    t.insert('A', nullptr);
    tn = t.find('A');
@@ -80,7 +80,7 @@ int main()
    for(int i = 0; i < sp->length(); i++)
    {
        cout<<(*sp)[i]<<endl;
-   }
+   }*/
 
 
 
